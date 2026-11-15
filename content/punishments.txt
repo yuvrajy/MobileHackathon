@@ -1,4 +1,5 @@
-# Punishments. In the demo, new rooms start with the first one selected.
+# Punishments the host can pick for last place
 # Edit this file, then run: npm run content
 
-Milk mile
+Sing a full song chosen by the winners
+Buy the winners a snack

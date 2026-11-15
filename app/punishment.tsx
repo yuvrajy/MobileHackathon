@@ -74,7 +74,7 @@ function PunishmentForm({ sessionToken, current }: { sessionToken: string; curre
 
   return (
     <Screen footer={<Button title="Save" onPress={save} loading={saving} />}>
-      <Text style={styles.lead}>{"Pick something light for last place. It's always optional - nobody has to do it."}</Text>
+      <Text style={styles.lead}>Pick a punishment for last place, or write your own.</Text>
       {option("skip", "Skip - no punishment", choice.kind === "skip", () => setChoice({ kind: "skip" }))}
       {(presets ?? []).map((p) =>
         option(p.key, p.description, choice.kind === "preset" && choice.presetKey === p.key, () =>
@@ -89,7 +89,7 @@ function PunishmentForm({ sessionToken, current }: { sessionToken: string; curre
             value={customText}
             onChangeText={setCustomText}
             maxLength={CUSTOM_PUNISHMENT_MAX_LENGTH}
-            placeholder="Keep it safe, kind and optional"
+            placeholder="Type your punishment"
             multiline
           />
         </View>

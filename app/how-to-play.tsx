@@ -10,7 +10,7 @@ const STEPS = [
   ["Twenty minutes", "The game ends when every team finishes all three, or when the 20-minute timer runs out."],
   ["Ranking", "First team to finish all three wins. Otherwise, most challenges completed wins."],
   ["Gallery", "At the end, everyone sees and can save every proof. Room media is deleted 30 minutes after the deadline."],
-  ["Optional punishment", "The host can pick a light punishment for last place. It's always optional - nobody has to do it."],
+  ["Punishment", "The host picks a punishment for last place or writes their own."],
   ["Play safe", "Ask before filming anyone, follow store rules, and never do anything dangerous or unkind."],
 ];
 

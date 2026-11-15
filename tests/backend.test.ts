@@ -359,7 +359,7 @@ describe("bloopers", () => {
 });
 
 describe("demo assignment", () => {
-  it("gives the host the first line of each file and the joiner the second, with the first punishment preselected", async () => {
+  it("gives the host the first line of each file and the joiner the second, leaving punishment selection to the host", async () => {
     const t = convexTest(schema, modules);
     const lines = (difficulty: "easy" | "medium" | "hard") =>
       [0, 1].map((position) => ({
@@ -376,7 +376,9 @@ describe("demo assignment", () => {
       punishments: [{ key: "p0", description: "Milk mile", category: "general", enabled: true }],
     });
     const { host, guest } = await twoTeamRoom(t);
-    expect((await t.query(api.rooms.getLobby, { sessionToken: guest })).punishment).toMatchObject({ kind: "preset", text: "Milk mile" });
+    expect((await t.query(api.rooms.getLobby, { sessionToken: guest })).punishment).toEqual({ kind: "skip" });
+    await t.mutation(api.rooms.setPunishment, { sessionToken: host, kind: "custom", customText: "Milk Mile" });
+    expect((await t.query(api.rooms.getLobby, { sessionToken: guest })).punishment).toEqual({ kind: "custom", text: "Milk Mile" });
     await t.mutation(api.rooms.startGame, { sessionToken: host });
     const hostGame = await t.query(api.game.getGame, { sessionToken: host });
     const guestGame = await t.query(api.game.getGame, { sessionToken: guest });

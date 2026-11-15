@@ -76,13 +76,10 @@ export const createRoom = mutation({
       retentionMs = TEST_RETENTION_MS;
     }
 
-    const defaultPunishment = await ctx.db.query("punishments").withIndex("by_enabled", (q) => q.eq("enabled", true)).first();
     const roomId = await ctx.db.insert("rooms", {
       code: await uniqueRoomCode(ctx),
       status: "lobby",
-      punishment: defaultPunishment
-        ? { kind: "preset", presetKey: defaultPunishment.key, text: defaultPunishment.description }
-        : { kind: "skip" },
+      punishment: { kind: "skip" },
       durationMs,
       retentionMs,
       isTestRoom,
