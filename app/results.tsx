@@ -43,7 +43,7 @@ export default function Results() {
       <Celebration eventKey={`results-${results.myTeamId}`} confirmed />
       <View style={styles.hero} testID="winner">
         <Doodle size={100} />
-        <Text style={styles.heroLabel}>{results.endReason === "deadline" ? "Time's up!" : "Everyone finished!"}</Text>
+        <Text style={styles.heroLabel}>{results.endReason === "deadline" ? "Time's up!" : results.endReason === "host_ended" ? "The host ended the game" : "Everyone finished!"}</Text>
         <Text style={styles.heroTitle}>
           {winners.length === 1 ? `${winners[0].name} wins!` : winners.length > 1 ? "It's a tie!" : "No winner this time"}
         </Text>

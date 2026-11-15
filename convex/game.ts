@@ -36,6 +36,7 @@ export const getGame = query({
       endsAt: room.endsAt!,
       myTeamId: team._id,
       myTeamName: team.name,
+      isHost: room.hostTeamId === team._id,
       finished: team.completedCount >= CHALLENGES_PER_TEAM,
       punishment: room.punishment,
       assignments: assignments

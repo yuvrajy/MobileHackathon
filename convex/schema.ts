@@ -47,7 +47,7 @@ export default defineSchema({
         standings: v.array(v.object({ teamId: v.id("teams"), rank: v.number(), completedCount: v.number() })),
         winnerTeamIds: v.array(v.id("teams")),
         lastPlaceTeamId: v.union(v.id("teams"), v.null()),
-        endReason: v.union(v.literal("all_finished"), v.literal("deadline")),
+        endReason: v.union(v.literal("all_finished"), v.literal("deadline"), v.literal("host_ended")),
       }),
     ),
   }).index("by_code", ["code"]),

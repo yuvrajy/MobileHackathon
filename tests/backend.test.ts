@@ -114,6 +114,17 @@ describe("lobby", () => {
     expect(lobby.punishment).toEqual({ kind: "custom", text: "Do a dance" });
   });
 
+  it("lets only the host end the room from the lobby", async () => {
+    const t = await setup();
+    const { host, guest, roomCode } = await twoTeamRoom(t);
+    await expect(t.mutation(api.rooms.endRoom, { sessionToken: guest })).rejects.toThrow(/Only the host/);
+    await t.mutation(api.rooms.endRoom, { sessionToken: host });
+    expect(await t.query(api.rooms.getSession, { sessionToken: guest, roomCode })).toEqual({ state: "expired" });
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+    expect(await t.query(api.rooms.getSession, { sessionToken: guest, roomCode })).toEqual({ state: "expired" });
+    expect(await t.run(async (ctx) => (await ctx.db.query("teams").collect()).length)).toBe(0);
+  });
+
   it("keeps the lobby intact when there aren't enough challenges", async () => {
     const t = await setup();
     await t.run(async (ctx) => {
@@ -248,6 +259,22 @@ describe("game", () => {
     expect(results.standings[0].name).toBe("Hosts");
     const late = await submitPhoto(t, guest, (await t.query(api.game.getGame, { sessionToken: guest })).assignments[0].id);
     expect(late).toMatchObject({ ok: false, code: "GAME_NOT_ACTIVE" });
+  });
+
+  it("lets the host end a running game early and shows results to everyone", async () => {
+    const t = await setup();
+    const { host, guest } = await twoTeamRoom(t);
+    await t.mutation(api.rooms.startGame, { sessionToken: host });
+    expect((await t.query(api.game.getGame, { sessionToken: host })).isHost).toBe(true);
+    expect((await t.query(api.game.getGame, { sessionToken: guest })).isHost).toBe(false);
+    await submitPhoto(t, guest, (await t.query(api.game.getGame, { sessionToken: guest })).assignments[0].id);
+
+    await expect(t.mutation(api.rooms.endRoom, { sessionToken: guest })).rejects.toThrow(/Only the host/);
+    await t.mutation(api.rooms.endRoom, { sessionToken: host });
+    const results = await t.query(api.gallery.getResults, { sessionToken: guest });
+    expect(results.endReason).toBe("host_ended");
+    expect(results.standings[0].name).toBe("Guests");
+    expect(await t.query(api.rooms.getSession, { sessionToken: host })).toMatchObject({ state: "results" });
   });
 
   it("expires the room, deletes media, and is idempotent", async () => {
