@@ -1,0 +1,67 @@
+project:
+    id: 01a80801-9925-4a16-a9e6-de77fcc0efdb
+session:
+    idle_timeout_seconds: 1800
+build:
+    framework: expo
+    profiles:
+        development:
+            ios:
+                app_id: 1e164696-f545-4768-bd81-d816612dfb77
+                env:
+                    EXPO_PUBLIC_CONVEX_URL: https://ceaseless-schnauzer-485.convex.cloud
+                setup_commands:
+                    - npm install
+                    - if [ ! -d ios ]; then npx expo prebuild --platform ios --no-install; fi
+                build_commands:
+                    - cd ios && if [ ! -d Pods ]; then pod install; fi && WS=$(ls -d *.xcworkspace | head -n 1) && xcodebuild -workspace "$WS" -scheme "${WS%.xcworkspace}" -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' ARCHS=arm64 -derivedDataPath build
+                output_path: ios/build/Build/Products/Debug-iphonesimulator/*.app
+            android:
+                app_id: 2213f2a6-1cab-4e7b-b5e0-3ea75a9ebcc3
+                env:
+                    EXPO_PUBLIC_CONVEX_URL: https://ceaseless-schnauzer-485.convex.cloud
+                setup_commands:
+                    - npm install
+                    - if [ ! -d android ]; then npx expo prebuild --platform android --no-install; fi
+                build_commands:
+                    - cd android && ./gradlew assembleDebug -PreactNativeArchitectures=x86_64
+                output_path: android/app/build/outputs/apk/debug/app-debug.apk
+        preview:
+            ios:
+                app_id: 1e164696-f545-4768-bd81-d816612dfb77
+                env:
+                    EXPO_PUBLIC_CONVEX_URL: https://ceaseless-schnauzer-485.convex.cloud
+                setup_commands:
+                    - npm install
+                    - if [ ! -d ios ]; then npx expo prebuild --platform ios --no-install; fi
+                build_commands:
+                    - cd ios && if [ ! -d Pods ]; then pod install; fi && WS=$(ls -d *.xcworkspace | head -n 1) && xcodebuild -workspace "$WS" -scheme "${WS%.xcworkspace}" -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' ARCHS=arm64 -derivedDataPath build
+                output_path: ios/build/Build/Products/Release-iphonesimulator/*.app
+            android:
+                app_id: 2213f2a6-1cab-4e7b-b5e0-3ea75a9ebcc3
+                env:
+                    EXPO_PUBLIC_CONVEX_URL: https://ceaseless-schnauzer-485.convex.cloud
+                setup_commands:
+                    - npm install
+                    - if [ ! -d android ]; then npx expo prebuild --platform android --no-install; fi
+                build_commands:
+                    - cd android && ./gradlew assembleRelease -PreactNativeArchitectures=x86_64
+                output_path: android/app/build/outputs/apk/release/app-release.apk
+pr_review:
+    enabled: true
+    review_triggers:
+        paths: []
+        labels: []
+        drafts: false
+    build:
+        kind: revyl
+        profile: preview
+    proof_of_changes:
+        enabled: true
+        harness:
+            kind: revyl
+        system_prompt: ""
+        always_verify: []
+    workflow_ids: []
+    strict_ci_check:
+        build: true

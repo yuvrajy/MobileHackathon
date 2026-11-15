@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "name": "revyl-cli-atlas-review",
+  "cli_version": "v0.2.12",
+  "files": {
+    "SKILL.md": "b2b185076a50edcfcbfbd63f934d06d6a5690b2fe3f09eedba1ac1e84583ab35",
+    "agents/openai.yaml": "4268478cb15a6b8d66064b21c22201f63b13b369c3c5cbb36c8b4d1abf368804"
+  }
+}

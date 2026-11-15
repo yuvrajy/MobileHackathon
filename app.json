@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "TEMPORARY",
+    "slug": "temporary",
+    "scheme": "temporary",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yuvrajy.temporary"
+    },
+    "android": {
+      "package": "com.yuvrajy.temporary",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-video",
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "TEMPORARY uses the camera to capture challenge proof and team photos.",
+          "microphonePermission": "TEMPORARY uses the microphone when you record video proof.",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "TEMPORARY saves photos and videos you choose to your library.",
+          "savePhotosPermission": "TEMPORARY saves photos and videos you choose to your library.",
+          "isAccessMediaLocationEnabled": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "TEMPORARY lets you pick a team photo from your library.",
+          "cameraPermission": "TEMPORARY uses the camera to take a team photo."
+        }
+      ]
+    ]
+  }
+}

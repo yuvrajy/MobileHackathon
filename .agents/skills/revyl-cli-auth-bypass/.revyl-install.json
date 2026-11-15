@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "name": "revyl-cli-auth-bypass",
+  "cli_version": "v0.2.12",
+  "files": {
+    "SKILL.md": "7b2c8e2dc9547809db7bf2183706ed55adb969c416c40d3552c0866cddcee9de",
+    "agents/openai.yaml": "efb08e201f52e7afae02cfba64142563668a731b50fa62ab3502f8089db1a849",
+    "references/android.md": "c149e74bb35179d1bdb51886fa9cd2a10be799ebe53d6c40d128522bb828c438",
+    "references/expo.md": "3160845c513bc07c024b4c3384a1abfe773e7e40de6b199eff976a8f9570e81f",
+    "references/flutter.md": "68114601a39588dc55151d3d466881d9f7f0537106dfaaa41ce65b430affa744",
+    "references/ios.md": "412c390c84085d8bad51e79af1fc221aca0322ff7bd58841ef56efd0011330e8",
+    "references/react-native.md": "53abcd01840945f67f3e358f0a1a4989dea9b58ab9df9aa1007e2e8603aabe76",
+    "references/web.md": "82398d56bac82df91935537750b59d43028043af0c693f3ee07d54ff0fb4f094"
+  }
+}
