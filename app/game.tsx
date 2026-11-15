@@ -1,14 +1,16 @@
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import { Text } from "../components/Typography";
+import { Button } from "../components/Button";
 import { ChallengeCard } from "../components/ChallengeCard";
 import { Celebration } from "../components/Celebration";
 import { Countdown } from "../components/Countdown";
 import { Leaderboard } from "../components/Leaderboard";
 import { Screen } from "../components/Screen";
 import { api } from "../convex/_generated/api";
+import { errorMessage } from "../lib/errors";
 import { getPendingProofs, type PendingProof } from "../lib/pendingProof";
 import { useRoomRoute } from "../lib/useRoomRoute";
 import { useSubmitProof } from "../lib/useSubmitProof";
@@ -20,6 +22,8 @@ export default function Game() {
   const submitProof = useSubmitProof(sessionToken);
   const [pending, setPending] = useState<Record<string, PendingProof>>({});
   const [uploading, setUploading] = useState<string | null>(null);
+  const endRoom = useMutation(api.rooms.endRoom);
+  const [ending, setEnding] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -44,6 +48,24 @@ export default function Game() {
     setPending(await getPendingProofs());
     if (!outcome.ok) Alert.alert("Not sent", outcome.message);
   };
+
+  const confirmEnd = () =>
+    Alert.alert("End the game for everyone?", "Scores lock in now and everyone goes to the results.", [
+      { text: "Keep playing", style: "cancel" },
+      {
+        text: "End game",
+        style: "destructive",
+        onPress: async () => {
+          setEnding(true);
+          try {
+            await endRoom({ sessionToken: sessionToken! });
+          } catch (e) {
+            Alert.alert("Couldn't end the game", errorMessage(e));
+            setEnding(false);
+          }
+        },
+      },
+    ]);
 
   return (
     <Screen>
@@ -79,6 +101,8 @@ export default function Game() {
 
       <Text style={styles.section}>Leaderboard</Text>
       <Leaderboard rows={game.leaderboard} myTeamId={game.myTeamId} />
+
+      {game.isHost ? <Button testID="end-game" title="End game" variant="danger" onPress={confirmEnd} loading={ending} /> : null}
     </Screen>
   );
 }

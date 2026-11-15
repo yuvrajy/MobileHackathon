@@ -7,7 +7,7 @@ import { rankTeams } from "./logic/ranking";
 
 const CLEANUP_BATCH = 50;
 
-export async function finalizeRoom(ctx: MutationCtx, room: Doc<"rooms">, endReason: "all_finished" | "deadline") {
+export async function finalizeRoom(ctx: MutationCtx, room: Doc<"rooms">, endReason: "all_finished" | "deadline" | "host_ended") {
   if (room.status !== "active") return;
   const teams = await ctx.db.query("teams").withIndex("by_room", (q) => q.eq("roomId", room._id)).collect();
   const ranking = rankTeams(

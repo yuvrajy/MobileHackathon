@@ -18,7 +18,9 @@ export default function Lobby() {
   const { sessionToken } = useRoomRoute("lobby");
   const lobby = useQuery(api.rooms.getLobby, sessionToken ? { sessionToken } : "skip");
   const startGame = useMutation(api.rooms.startGame);
+  const endRoom = useMutation(api.rooms.endRoom);
   const [starting, setStarting] = useState(false);
+  const [ending, setEnding] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,6 +45,17 @@ export default function Lobby() {
     }
   };
 
+  const end = async () => {
+    setEnding(true);
+    setError(null);
+    try {
+      await endRoom({ sessionToken });
+    } catch (e) {
+      setError(errorMessage(e));
+      setEnding(false);
+    }
+  };
+
   const copy = async () => {
     await Clipboard.setStringAsync(lobby.roomCode);
     setCopied(true);
@@ -55,7 +68,8 @@ export default function Lobby() {
           <>
             {error ? <Text style={styles.error}>{error}</Text> : null}
             {!canStart ? <Text style={styles.hint}>Waiting for at least {lobby.minTeams} teams.</Text> : null}
-            <Button testID="start-game" title="Start game" onPress={start} disabled={!canStart} loading={starting} />
+            <Button testID="start-game" title="Start game" onPress={start} disabled={!canStart || ending} loading={starting} />
+            <Button testID="end-room" title="End room" variant="danger" onPress={end} disabled={starting} loading={ending} />
           </>
         ) : (
           <Text style={styles.waiting} testID="waiting-for-host">

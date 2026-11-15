@@ -18,6 +18,7 @@ import {
   TEST_RETENTION_MS,
 } from "./constants";
 import { fail } from "./errors";
+import { finalizeRoom } from "./lifecycle";
 import { isStorageAttached, rejectUpload } from "./media";
 import { assignChallenges, InsufficientChallengesError } from "./logic/assignment";
 import { generateRoomCode, isWellFormedRoomCode, normalizeRoomCode } from "./logic/roomCode";
@@ -288,5 +289,19 @@ export const startGame = mutation({
     await ctx.scheduler.runAt(endsAt, internal.lifecycle.finalizeAtDeadline, { roomId: room._id });
     await ctx.scheduler.runAt(expiresAt, internal.lifecycle.expireRoom, { roomId: room._id });
     return { endsAt };
+  },
+});
+
+export const endRoom = mutation({
+  args: { sessionToken: v.string() },
+  handler: async (ctx, { sessionToken }) => {
+    const { room, team } = await requireMember(ctx, sessionToken, ["lobby", "active"]);
+    if (room.hostTeamId !== team._id) fail("NOT_HOST", "Only the host can end the game.");
+    if (room.status === "active") {
+      await finalizeRoom(ctx, room, "host_ended");
+      return;
+    }
+    await ctx.db.patch("rooms", room._id, { status: "expired", endedAt: Date.now() });
+    await ctx.scheduler.runAfter(0, internal.lifecycle.expireRoom, { roomId: room._id });
   },
 });
