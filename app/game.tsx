@@ -1,8 +1,10 @@
 import { useQuery } from "convex/react";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
+import { Text } from "../components/Typography";
 import { ChallengeCard } from "../components/ChallengeCard";
+import { Celebration } from "../components/Celebration";
 import { Countdown } from "../components/Countdown";
 import { Leaderboard } from "../components/Leaderboard";
 import { Screen } from "../components/Screen";
@@ -45,6 +47,7 @@ export default function Game() {
 
   return (
     <Screen>
+      <Celebration eventKey={`finished-${game.myTeamId}`} confirmed={game.finished} />
       <View style={styles.header}>
         <Text style={styles.context}>
           {game.myTeamName} · Room {game.roomCode}
@@ -57,6 +60,11 @@ export default function Game() {
           <Text style={styles.bannerText}>All challenges complete! Waiting for the other teams.</Text>
         </View>
       ) : null}
+
+      <View style={styles.progressHeading}>
+        <Text style={styles.section}>Your challenges</Text>
+        <Text style={styles.progress}>{game.assignments.filter((a) => a.status === "completed").length} of 3 complete</Text>
+      </View>
 
       {game.assignments.map((a) => (
         <ChallengeCard
@@ -76,7 +84,9 @@ export default function Game() {
 }
 
 const styles = StyleSheet.create({
-  header: { alignItems: "center", gap: spacing.xs },
+  header: { alignItems: "center", gap: spacing.sm, padding: spacing.md, borderWidth: 3, borderColor: colors.text, borderRadius: radius.lg, backgroundColor: colors.yellow },
+  progressHeading: { gap: spacing.sm },
+  progress: { fontSize: font.body, color: colors.text, fontWeight: "600" },
   context: { fontSize: font.small, color: colors.muted },
   banner: { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md },
   bannerText: { fontSize: font.body, color: colors.success, fontWeight: "600", textAlign: "center" },

@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Text } from "./Typography";
 import { colors, font, radius, spacing } from "../lib/theme";
 
 type Punishment = { kind: "skip" } | { kind: "preset"; presetKey: string; text: string } | { kind: "custom"; text: string };
@@ -14,7 +15,7 @@ export function PunishmentSummary({ punishment, label = "Punishment for last pla
 }
 
 const styles = StyleSheet.create({
-  box: { backgroundColor: colors.surface, borderRadius: radius.md, padding: spacing.md, gap: spacing.xs },
+  box: { backgroundColor: colors.yellow, borderWidth: 3, borderColor: colors.text, borderRadius: radius.md, padding: spacing.md, gap: spacing.sm },
   label: { fontSize: font.small, color: colors.muted, fontWeight: "600" },
   text: { fontSize: font.body, color: colors.text },
   note: { fontSize: font.small, color: colors.muted },

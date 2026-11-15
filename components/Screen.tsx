@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "react-native";
+import { Text } from "./Typography";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useConvexConnectionState } from "convex/react";
 import { colors, font, spacing } from "../lib/theme";
@@ -32,8 +33,8 @@ export function Screen({ children, scroll = true, footer }: { children: ReactNod
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   fill: { flex: 1 },
-  content: { padding: spacing.lg, gap: spacing.md },
-  footer: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md, gap: spacing.sm },
+  content: { padding: spacing.lg, gap: spacing.lg, width: "100%", maxWidth: 560, alignSelf: "center", flexGrow: 1 },
+  footer: { paddingHorizontal: spacing.lg, paddingBottom: spacing.md, gap: spacing.sm, width: "100%", maxWidth: 560, alignSelf: "center", backgroundColor: colors.background },
   offline: { backgroundColor: colors.surface, paddingVertical: spacing.xs, alignItems: "center" },
   offlineText: { color: colors.muted, fontSize: font.small },
 });

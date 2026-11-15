@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Alert, Image, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, StyleSheet, View } from "react-native";
+import { Text } from "./Typography";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { Button } from "./Button";
 import { PermissionDeniedError, saveRemoteFileToLibrary } from "../lib/media";
@@ -62,7 +63,7 @@ export function GalleryItem({ item }: { item: Item }) {
 }
 
 const styles = StyleSheet.create({
-  card: { borderWidth: 1, borderColor: colors.border, borderRadius: radius.lg, overflow: "hidden" },
+  card: { borderWidth: 3, borderColor: colors.border, borderRadius: radius.lg, overflow: "hidden", backgroundColor: colors.white },
   media: { width: "100%", aspectRatio: 1, backgroundColor: colors.surface },
   body: { padding: spacing.md, gap: spacing.sm },
   team: { fontSize: font.small, fontWeight: "700", color: colors.accent },

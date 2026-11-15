@@ -2,11 +2,13 @@ import * as Clipboard from "expo-clipboard";
 import { useMutation, useQuery } from "convex/react";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
+import { Text } from "../components/Typography";
 import { Button } from "../components/Button";
 import { PunishmentSummary } from "../components/PunishmentSummary";
 import { Screen } from "../components/Screen";
 import { TeamAvatar } from "../components/TeamAvatar";
+import { Doodle } from "../components/Doodle";
 import { api } from "../convex/_generated/api";
 import { errorMessage } from "../lib/errors";
 import { useRoomRoute } from "../lib/useRoomRoute";
@@ -69,6 +71,7 @@ export default function Lobby() {
         </Text>
         <Text style={styles.copy}>{copied ? "Copied" : "Tap to copy"}</Text>
       </Pressable>
+      <View style={styles.mascot}><Doodle size={100} /><Text style={styles.roomNote}>Get your people in here.</Text></View>
       {lobby.isTestRoom ? <Text style={styles.hint}>Test room: {Math.round(lobby.durationMs / 60000)} minute game.</Text> : null}
 
       <Text style={styles.section}>Teams ({lobby.teams.length})</Text>
@@ -76,7 +79,7 @@ export default function Lobby() {
         {lobby.teams.map((team) => (
           <View key={team.id} style={styles.team}>
             <TeamAvatar name={team.name} url={team.avatarUrl} />
-            <Text style={styles.teamName} numberOfLines={1}>
+            <Text style={styles.teamName}>
               {team.name}
               {team.id === lobby.myTeamId ? " (you)" : ""}
             </Text>
@@ -101,15 +104,17 @@ export default function Lobby() {
 }
 
 const styles = StyleSheet.create({
-  codeBox: { alignItems: "center", backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.lg, gap: spacing.xs },
+  codeBox: { alignItems: "center", backgroundColor: colors.purple, borderWidth: 3, borderColor: colors.text, borderRadius: radius.lg, padding: spacing.lg, gap: spacing.sm },
+  mascot: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  roomNote: { flex: 1, fontSize: 22, fontWeight: "800", color: colors.text },
   codeLabel: { fontSize: font.small, color: colors.muted, fontWeight: "600" },
-  code: { fontSize: font.code, fontWeight: "800", letterSpacing: 8, color: colors.text },
+  code: { fontSize: font.code, fontWeight: "800", letterSpacing: 4, color: colors.text, flexShrink: 1 },
   copy: { fontSize: font.small, color: colors.accent },
   section: { fontSize: font.heading, fontWeight: "700", color: colors.text },
   teams: { gap: spacing.sm },
   team: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 48 },
   teamName: { flex: 1, fontSize: font.body, color: colors.text },
-  host: { fontSize: font.small, color: colors.accent, fontWeight: "700" },
+  host: { fontSize: font.small, color: colors.text, fontWeight: "700" },
   row: { flexDirection: "row", gap: spacing.sm },
   flex: { flex: 1 },
   hint: { fontSize: font.small, color: colors.muted, textAlign: "center" },

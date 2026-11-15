@@ -1,7 +1,10 @@
 import { useQuery } from "convex/react";
 import { router } from "expo-router";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { Text } from "../components/Typography";
 import { Button } from "../components/Button";
+import { Celebration } from "../components/Celebration";
+import { Doodle } from "../components/Doodle";
 import { GalleryItem } from "../components/GalleryItem";
 import { PunishmentSummary } from "../components/PunishmentSummary";
 import { Screen } from "../components/Screen";
@@ -37,7 +40,9 @@ export default function Results() {
 
   return (
     <Screen footer={<Button testID="new-game" title="New game" onPress={newGame} />}>
+      <Celebration eventKey={`results-${results.myTeamId}`} confirmed />
       <View style={styles.hero} testID="winner">
+        <Doodle size={100} />
         <Text style={styles.heroLabel}>{results.endReason === "deadline" ? "Time's up!" : "Everyone finished!"}</Text>
         <Text style={styles.heroTitle}>
           {winners.length === 1 ? `${winners[0].name} wins!` : winners.length > 1 ? "It's a tie!" : "No winner this time"}
@@ -49,7 +54,7 @@ export default function Results() {
         <View key={s.teamId} style={styles.standing}>
           <Text style={styles.rank}>{s.rank}</Text>
           <TeamAvatar name={s.name} url={s.avatarUrl} size={40} />
-          <Text style={styles.name} numberOfLines={1}>
+          <Text style={styles.name}>
             {s.name}
             {s.teamId === results.myTeamId ? " (you)" : ""}
           </Text>
@@ -87,12 +92,12 @@ export default function Results() {
 }
 
 const styles = StyleSheet.create({
-  hero: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.lg, alignItems: "center", gap: spacing.xs },
+  hero: { backgroundColor: colors.accent, borderWidth: 3, borderColor: colors.text, borderRadius: radius.lg, padding: spacing.lg, alignItems: "center", gap: spacing.sm },
   heroLabel: { fontSize: font.small, color: colors.muted, fontWeight: "600" },
   heroTitle: { fontSize: font.title, fontWeight: "800", color: colors.text, textAlign: "center" },
   section: { fontSize: font.heading, fontWeight: "700", color: colors.text, marginTop: spacing.sm },
   standing: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 48 },
-  rank: { width: 24, fontSize: font.heading, fontWeight: "800", color: colors.accent, textAlign: "center" },
+  rank: { width: 24, fontSize: font.heading, fontWeight: "800", color: colors.text, textAlign: "center" },
   name: { flex: 1, fontSize: font.body, color: colors.text },
   count: { fontSize: font.body, fontWeight: "700", color: colors.text },
   note: { fontSize: font.small, color: colors.muted },

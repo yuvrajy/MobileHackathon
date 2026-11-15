@@ -48,7 +48,8 @@
           "photosPermission": "touch grass lets you pick a team photo from your library.",
           "cameraPermission": "touch grass uses the camera to take a team photo."
         }
-      ]
+      ],
+      "expo-font"
     ]
   }
 }

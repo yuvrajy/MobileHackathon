@@ -1,7 +1,8 @@
 import * as ImagePicker from "expo-image-picker";
 import { useMutation } from "convex/react";
 import { useRef, useState, type ReactNode } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, View } from "react-native";
+import { Text } from "./Typography";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import { TEAM_NAME_MAX_LENGTH } from "../convex/constants";
@@ -12,6 +13,7 @@ import { colors, font, spacing } from "../lib/theme";
 import { Button } from "./Button";
 import { TeamAvatar } from "./TeamAvatar";
 import { TextField } from "./TextField";
+import { Doodle } from "./Doodle";
 
 type Props = {
   submitLabel: string;
@@ -25,6 +27,7 @@ export function TeamSetupForm({ submitLabel, extraFields, onSubmit, onDone }: Pr
   const [photo, setPhoto] = useState<{ uri: string; mimeType: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [glance, setGlance] = useState(0);
   const tokenRef = useRef<string | null>(null);
   const generateAvatarUrl = useMutation(api.rooms.generateAvatarUploadUrl);
   const setAvatar = useMutation(api.rooms.setAvatar);
@@ -84,11 +87,14 @@ export function TeamSetupForm({ submitLabel, extraFields, onSubmit, onDone }: Pr
 
   return (
     <View style={styles.wrap}>
+      <View style={styles.mascot}><Doodle size={110} glance={glance} /><Text style={styles.prompt}>Who are we calling you?</Text></View>
       {extraFields}
       <TextField
         testID="team-name"
         label="Team name"
         value={name}
+        onFocus={() => setGlance(4)}
+        onBlur={() => setGlance(0)}
         onChangeText={setName}
         maxLength={TEAM_NAME_MAX_LENGTH}
         autoCapitalize="words"
@@ -111,7 +117,9 @@ export function TeamSetupForm({ submitLabel, extraFields, onSubmit, onDone }: Pr
 
 const styles = StyleSheet.create({
   wrap: { gap: spacing.md },
+  mascot: { flexDirection: "row", alignItems: "center", gap: spacing.md },
+  prompt: { fontSize: 24, fontWeight: "800", color: colors.text, flex: 1 },
   photoRow: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 56 },
-  photoText: { fontSize: font.body, color: colors.accent, fontWeight: "600" },
+  photoText: { flex: 1, fontSize: font.body, color: colors.text, fontWeight: "600" },
   error: { color: colors.danger, fontSize: font.small },
 });
