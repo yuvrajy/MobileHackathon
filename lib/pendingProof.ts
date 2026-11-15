@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const KEY = "temporary.pendingProof";
+const KEY = "touchgrass.pendingProof";
 
 export type PendingProof = {
   assignmentId: string;

@@ -39,7 +39,7 @@ export default function Home() {
     <Screen scroll={false}>
       <View style={styles.center}>
         <Text style={styles.title} accessibilityRole="header">
-          TEMPORARY
+          touch grass
         </Text>
         <Text style={styles.subtitle}>Split into teams. Three challenges. Two hours. Bring back the proof.</Text>
       </View>

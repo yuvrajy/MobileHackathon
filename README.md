@@ -1,4 +1,4 @@
-# TEMPORARY
+# touch grass
 
 A two-hour, real-world team game for friend groups. Teams join a room by code, each get one easy, one medium and one hard challenge, capture photo or video proof in the app, and reunite for the results, an optional punishment for last place, and a private gallery that is deleted 30 minutes after the deadline.
 

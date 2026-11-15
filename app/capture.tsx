@@ -40,7 +40,7 @@ export default function CaptureProof() {
   if (!cameraPermission.granted) {
     return (
       <SafeAreaView style={styles.permission}>
-        <Text style={styles.permissionText}>TEMPORARY needs the camera to capture challenge proof.</Text>
+        <Text style={styles.permissionText}>touch grass needs the camera to capture challenge proof.</Text>
         <Button
           title={cameraPermission.canAskAgain ? "Allow camera" : "Open Settings"}
           onPress={() => (cameraPermission.canAskAgain ? requestCamera() : Linking.openSettings())}

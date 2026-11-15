@@ -2,8 +2,8 @@ import * as Crypto from "expo-crypto";
 import * as SecureStore from "expo-secure-store";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-const TOKEN_KEY = "temporary.sessionToken";
-const ROOM_KEY = "temporary.roomCode";
+const TOKEN_KEY = "touchgrass.sessionToken";
+const ROOM_KEY = "touchgrass.roomCode";
 
 export function generateSessionToken(): string {
   return [...Crypto.getRandomBytes(32)].map((b) => b.toString(16).padStart(2, "0")).join("");

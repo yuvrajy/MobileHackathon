@@ -1,12 +1,12 @@
-# TEMPORARY — Product & Technical Architecture
+# touch grass — Product & Technical Architecture
 
 **Status:** Hackathon MVP specification, 15 November 2026  
-**Working name:** TEMPORARY (replaceable)  
+**App name:** touch grass
 **Goal:** Ship a native, multiplayer mobile game that can be demonstrated on real phones today.
 
 ## 1. Product thesis
 
-Middle- and high-school friend groups often meet at malls and spend their time wandering around without a shared activity. TEMPORARY turns that hangout into a two-hour, real-world team competition. Friends split into teams, complete three challenging activities, capture proof, and reunite to learn the results and see the memories they made.
+Middle- and high-school friend groups often meet at malls and spend their time wandering around without a shared activity. touch grass turns that hangout into a two-hour, real-world team competition. Friends split into teams, complete three challenging activities, capture proof, and reunite to learn the results and see the memories they made.
 
 The value proposition is **something to do together, a reason to explore, and funny stories to bring back**. The product should minimize time spent navigating the phone.
 
@@ -113,7 +113,7 @@ Keep each screen minimal. Use a consistent white or neutral background, readable
 
 ### Home
 
-Title TEMPORARY and three large actions: Create room; Join room; How to play. If a saved session is still valid, automatically resume it rather than making the user rejoin (allow explicit return to home after expiration). How to play is a short static text screen: teams, three challenges, evidence, two hours, ranking, gallery and optional punishment.
+Title touch grass and three large actions: Create room; Join room; How to play. If a saved session is still valid, automatically resume it rather than making the user rejoin (allow explicit return to home after expiration). How to play is a short static text screen: teams, three challenges, evidence, two hours, ranking, gallery and optional punishment.
 
 ### Create / Join
 
