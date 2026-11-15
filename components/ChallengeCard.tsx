@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, type ImageSourcePropType } from "react-native";
 import { Button } from "./Button";
 import { colors, font, radius, spacing } from "../lib/theme";
 
 type Props = {
   description: string;
+  icon?: ImageSourcePropType;
   difficulty: "easy" | "medium" | "hard";
   state: "not_started" | "uploading" | "unsent" | "completed";
   onCapture: () => void;
@@ -12,7 +13,7 @@ type Props = {
 
 const LABEL = { easy: "Easy", medium: "Medium", hard: "Hard" } as const;
 
-export function ChallengeCard({ description, difficulty, state, onCapture, onRetry }: Props) {
+export function ChallengeCard({ description, icon, difficulty, state, onCapture, onRetry }: Props) {
   const completed = state === "completed";
   return (
     <View style={[styles.card, completed && styles.completed]} testID={`challenge-${difficulty}`}>
@@ -22,7 +23,10 @@ export function ChallengeCard({ description, difficulty, state, onCapture, onRet
         {state === "uploading" ? <Text style={styles.status}>Uploading…</Text> : null}
         {state === "unsent" ? <Text style={styles.status}>Not sent yet</Text> : null}
       </View>
-      <Text style={styles.description}>{description}</Text>
+      <View style={styles.body}>
+        {icon ? <Image source={icon} style={styles.icon} accessibilityIgnoresInvertColors /> : null}
+        <Text style={[styles.description, styles.flex]}>{description}</Text>
+      </View>
       {state === "not_started" ? <Button title="Capture proof" onPress={onCapture} /> : null}
       {state === "unsent" && onRetry ? (
         <View style={styles.row}>
@@ -47,5 +51,7 @@ const styles = StyleSheet.create({
   status: { fontSize: font.small, color: colors.muted },
   description: { fontSize: font.body, color: colors.text, lineHeight: 22 },
   row: { flexDirection: "row", gap: spacing.sm },
+  body: { flexDirection: "row", alignItems: "center", gap: spacing.md },
+  icon: { width: 72, height: 72, borderRadius: radius.md },
   flex: { flex: 1 },
 });

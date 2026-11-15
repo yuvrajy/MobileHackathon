@@ -75,10 +75,13 @@ export const createRoom = mutation({
       retentionMs = TEST_RETENTION_MS;
     }
 
+    const defaultPunishment = await ctx.db.query("punishments").withIndex("by_enabled", (q) => q.eq("enabled", true)).first();
     const roomId = await ctx.db.insert("rooms", {
       code: await uniqueRoomCode(ctx),
       status: "lobby",
-      punishment: { kind: "skip" },
+      punishment: defaultPunishment
+        ? { kind: "preset", presetKey: defaultPunishment.key, text: defaultPunishment.description }
+        : { kind: "skip" },
       durationMs,
       retentionMs,
       isTestRoom,
@@ -252,8 +255,11 @@ export const startGame = mutation({
     let plan;
     try {
       plan = assignChallenges(
-        teams.map((t) => t._id),
-        pool.map((c) => ({ key: c.key, description: c.description, difficulty: c.difficulty })),
+        [...teams].sort((a, b) => Number(b._id === room.hostTeamId) - Number(a._id === room.hostTeamId) || a._creationTime - b._creationTime).map((t) => t._id),
+        [...pool]
+          .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+          .map((c) => ({ key: c.key, description: c.description, difficulty: c.difficulty })),
+        null,
       );
     } catch (error) {
       if (error instanceof InsufficientChallengesError) {

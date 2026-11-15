@@ -7,6 +7,7 @@ export type ChallengeInput = {
   category: string;
   environments: string[];
   enabled: boolean;
+  position?: number;
 };
 
 export type PunishmentInput = {
@@ -47,6 +48,7 @@ export function validateChallenges(raw: unknown, minTeams: number): { challenges
       category: typeof c.category === "string" ? c.category : "general",
       environments: Array.isArray(c.environments) ? (c.environments as string[]) : [],
       enabled: c.enabled !== false,
+      ...(typeof c.position === "number" ? { position: c.position } : {}),
     });
   });
   if (errors.length === 0) {

@@ -7,6 +7,7 @@ import { Countdown } from "../components/Countdown";
 import { Leaderboard } from "../components/Leaderboard";
 import { Screen } from "../components/Screen";
 import { api } from "../convex/_generated/api";
+import { challengeIcon } from "../lib/challengeIcons";
 import { getPendingProofs, type PendingProof } from "../lib/pendingProof";
 import { useRoomRoute } from "../lib/useRoomRoute";
 import { useSubmitProof } from "../lib/useSubmitProof";
@@ -62,6 +63,7 @@ export default function Game() {
         <ChallengeCard
           key={a.id}
           description={a.description}
+          icon={challengeIcon(a.challengeKey)}
           difficulty={a.difficulty}
           state={a.status === "completed" ? "completed" : uploading === a.id ? "uploading" : pending[a.id] ? "unsent" : "not_started"}
           onCapture={() => router.push({ pathname: "/capture", params: { assignmentId: a.id, description: a.description } })}

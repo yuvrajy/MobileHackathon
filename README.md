@@ -1,4 +1,6 @@
-# touch grass
+# touch grass (demo branch)
+
+> The `demo` branch runs 20-minute games against its own Convex deployment (`.env.local` in this checkout). Each challenge file has two lines: the first goes to the host's team, the second to the joining team, and new rooms start with the first punishment selected. Challenge icons live in `assets/challenges/` and are mapped by content key in `lib/challengeIcons.ts`.
 
 A two-hour, real-world team game for friend groups. Teams join a room by code, each get one easy, one medium and one hard challenge, capture photo or video proof in the app, and reunite for the results, an optional punishment for last place, and a private gallery that is deleted 30 minutes after the deadline.
 

@@ -331,6 +331,35 @@ describe("bloopers", () => {
   });
 });
 
+describe("demo assignment", () => {
+  it("gives the host the first line of each file and the joiner the second, with the first punishment preselected", async () => {
+    const t = convexTest(schema, modules);
+    const lines = (difficulty: "easy" | "medium" | "hard") =>
+      [0, 1].map((position) => ({
+        key: `${difficulty}_${position}`,
+        description: `${difficulty} ${position === 0 ? "host" : "joiner"}`,
+        difficulty,
+        category: "general",
+        environments: [],
+        enabled: true,
+        position,
+      }));
+    await t.mutation(internal.content.importContent, {
+      challenges: [...lines("hard"), ...lines("easy"), ...lines("medium")].reverse(),
+      punishments: [{ key: "p0", description: "Milk mile", category: "general", enabled: true }],
+    });
+    const { host, guest } = await twoTeamRoom(t);
+    expect((await t.query(api.rooms.getLobby, { sessionToken: guest })).punishment).toMatchObject({ kind: "preset", text: "Milk mile" });
+    await t.mutation(api.rooms.startGame, { sessionToken: host });
+    const hostGame = await t.query(api.game.getGame, { sessionToken: host });
+    const guestGame = await t.query(api.game.getGame, { sessionToken: guest });
+    expect(hostGame.assignments.map((a) => a.description)).toEqual(["easy host", "medium host", "hard host"]);
+    expect(guestGame.assignments.map((a) => a.description)).toEqual(["easy joiner", "medium joiner", "hard joiner"]);
+    const room = await t.run(async (ctx) => (await ctx.db.query("rooms").first())!);
+    expect(room.endsAt! - room.startedAt!).toBe(20 * 60 * 1000);
+  });
+});
+
 describe("reconnect", () => {
   it("returns the same team for a stored token in every phase", async () => {
     const t = await setup();

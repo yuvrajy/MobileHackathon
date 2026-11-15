@@ -17,6 +17,7 @@ export default defineSchema({
     category: v.string(),
     environments: v.array(v.string()),
     enabled: v.boolean(),
+    position: v.optional(v.number()),
   })
     .index("by_key", ["key"])
     .index("by_difficulty_enabled", ["difficulty", "enabled"]),

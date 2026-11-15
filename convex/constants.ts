@@ -1,4 +1,4 @@
-export const GAME_DURATION_MS = 2 * 60 * 60 * 1000;
+export const GAME_DURATION_MS = 20 * 60 * 1000;
 export const RETENTION_AFTER_DEADLINE_MS = 30 * 60 * 1000;
 export const MIN_TEAMS_TO_START = 2;
 export const MAX_TEAMS_PER_ROOM = 12;

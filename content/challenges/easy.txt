@@ -1,13 +1,6 @@
 # Easy challenges
-# One per line. Blank lines and lines starting with # are ignored.
+# Demo: the first line goes to the host's team, the second to the joining team.
 # Edit this file, then run: npm run content
-# These are development samples - replace them with your own.
 
-Take a team photo with something that is your team's favorite color
-Find a store sign that starts with the first letter of a teammate's name
-Strike a superhero pose next to a fountain, plant or statue
-Find three different kinds of shoes in a single shop window
-Take a photo with the tallest thing you can find indoors
-Show a menu item you've never heard of
-Get a photo of a sign with a number bigger than 100
-Re-create a famous album cover pose in a public space
+Strike a pose with a mannequin
+Pet a dog (ask the owner first)

@@ -21,7 +21,7 @@ export function shuffle<T>(items: T[], random: () => number): T[] {
 export function assignChallenges<TeamId>(
   teamIds: TeamId[],
   pool: PoolChallenge[],
-  random: () => number = Math.random,
+  random: (() => number) | null = Math.random,
 ): TeamAssignment<TeamId>[] {
   const byDifficulty = new Map<Difficulty, PoolChallenge[]>();
   for (const difficulty of DIFFICULTIES) {
@@ -31,7 +31,7 @@ export function assignChallenges<TeamId>(
     if (tier.length < teamIds.length) {
       throw new InsufficientChallengesError(difficulty, tier.length, teamIds.length);
     }
-    byDifficulty.set(difficulty, shuffle(tier, random));
+    byDifficulty.set(difficulty, random ? shuffle(tier, random) : tier);
   }
   return teamIds.map((teamId, index) => ({
     teamId,

@@ -41,7 +41,7 @@ export default function Home() {
         <Text style={styles.title} accessibilityRole="header">
           touch grass
         </Text>
-        <Text style={styles.subtitle}>Split into teams. Three challenges. Two hours. Bring back the proof.</Text>
+        <Text style={styles.subtitle}>Split into teams. Three challenges. Twenty minutes. Bring back the proof.</Text>
       </View>
       <View style={styles.actions}>
         <Button testID="create-room" title="Create room" onPress={() => router.push("/create")} />

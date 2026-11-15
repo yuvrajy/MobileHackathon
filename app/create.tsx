@@ -23,7 +23,7 @@ export default function CreateRoom() {
         extraFields={
           TEST_ROOMS_ENABLED ? (
             <TextField
-              label="Test game length in minutes (dev only, blank for 2 hours)"
+              label="Test game length in minutes (dev only, blank for 20 minutes)"
               value={testMinutes}
               onChangeText={setTestMinutes}
               keyboardType="number-pad"

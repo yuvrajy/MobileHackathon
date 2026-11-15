@@ -25,7 +25,7 @@ function collect(entries, file, prefix, errors) {
       continue;
     }
     seen.set(key, line);
-    items.push({ key, description: text });
+    items.push({ key, description: text, position: items.length });
   }
   return items;
 }
