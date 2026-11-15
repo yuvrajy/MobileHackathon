@@ -1,0 +1,13 @@
+# Hard challenges
+# One per line. Blank lines and lines starting with # are ignored.
+# Edit this file, then run: npm run content
+# These are development samples - replace them with your own.
+
+Film a 30-second nature-documentary narration about your teammate shopping
+Get a store employee to share their favorite item in the store and photograph it (only if they agree)
+Recreate a movie scene in under 45 seconds using only things around you
+Build a tiny 'art installation' out of receipts or napkins and photograph it, then clean up
+Find five things that rhyme and film yourselves naming them
+Film a full 'cooking show' intro at the food court without buying anything
+Take a photo where it looks like your team is floating
+Film a one-take mini music video with a made-up 20-second song about the mall

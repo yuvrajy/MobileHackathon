@@ -6,8 +6,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../components/Button";
 import { ProofPreview } from "../components/ProofPreview";
 import { MAX_VIDEO_SECONDS } from "../convex/constants";
-import { deleteLocalFile, mimeTypeForUri, PermissionDeniedError, persistCapture, saveLocalFileToLibrary } from "../lib/media";
+import { useMutation } from "convex/react";
+import { api } from "../convex/_generated/api";
+import type { Id } from "../convex/_generated/dataModel";
+import { errorMessage } from "../lib/errors";
+import { deleteLocalFile, mimeTypeForUri, persistCapture, uploadToConvex } from "../lib/media";
 import { useSession } from "../lib/session";
+import { useRoomSession } from "../lib/useRoomRoute";
 import { useSubmitProof } from "../lib/useSubmitProof";
 import { colors, font, MIN_TOUCH, radius, spacing } from "../lib/theme";
 
@@ -26,8 +31,17 @@ export default function CaptureProof() {
   const [capture, setCapture] = useState<Capture | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [savingBlooper, setSavingBlooper] = useState(false);
+  const [blooperSaved, setBlooperSaved] = useState(false);
+  const generateBlooperUrl = useMutation(api.game.generateBlooperUploadUrl);
+  const saveBlooperMutation = useMutation(api.game.saveBlooper);
   const [message, setMessage] = useState<string | null>(null);
   const recordStart = useRef(0);
+  const { session } = useRoomSession();
+  const gameOver = session !== undefined && session.state !== "active";
+
+  useEffect(() => {
+    if (gameOver && !submitting && router.canGoBack()) router.back();
+  }, [gameOver, submitting]);
 
   useEffect(() => {
     if (!recording) return;
@@ -80,17 +94,34 @@ export default function CaptureProof() {
   const retake = () => {
     if (capture) deleteLocalFile(capture.uri);
     setCapture(null);
+    setBlooperSaved(false);
     setMessage(null);
   };
 
   const saveBlooper = async () => {
-    if (!capture) return;
+    if (!capture || !sessionToken || !assignmentId) return;
     setSavingBlooper(true);
+    setMessage(null);
     try {
-      await saveLocalFileToLibrary(capture.uri);
-      setMessage("Saved to your camera roll as a blooper. It doesn't count as proof.");
+      const mimeType = mimeTypeForUri(capture.uri, capture.mediaType);
+      const uploadUrl = await generateBlooperUrl({ sessionToken });
+      const storageId = await uploadToConvex(uploadUrl, capture.uri, mimeType);
+      const result = await saveBlooperMutation({
+        sessionToken,
+        assignmentId: assignmentId as Id<"assignments">,
+        storageId: storageId as Id<"_storage">,
+        mediaType: capture.mediaType,
+        mimeType,
+        durationSeconds: capture.durationSeconds,
+      });
+      if (result.ok) {
+        setBlooperSaved(true);
+        setMessage("Saved as a blooper. It shows up in Bloopers after the game and doesn't count as proof.");
+      } else {
+        setMessage(result.message);
+      }
     } catch (error) {
-      setMessage(error instanceof PermissionDeniedError ? "Allow photo library access in Settings to save bloopers." : "Couldn't save. Try again.");
+      setMessage(errorMessage(error));
     } finally {
       setSavingBlooper(false);
     }
@@ -135,7 +166,13 @@ export default function CaptureProof() {
             <Button title="Retake" variant="secondary" onPress={retake} disabled={submitting} />
           </View>
           <View style={styles.flex}>
-            <Button title="Save as Blooper" variant="secondary" onPress={saveBlooper} loading={savingBlooper} disabled={submitting} />
+            <Button
+              title={blooperSaved ? "Blooper saved" : "Save as Blooper"}
+              variant="secondary"
+              onPress={saveBlooper}
+              loading={savingBlooper}
+              disabled={submitting || blooperSaved}
+            />
           </View>
         </View>
       </SafeAreaView>

@@ -76,13 +76,6 @@ describe("rankTeams", () => {
 });
 
 describe("content validation", () => {
-  it("accepts the bundled development content", async () => {
-    const challenges = (await import("../data/challenges.json")).default;
-    const punishments = (await import("../data/punishments.json")).default;
-    expect(validateChallenges(challenges, 2).errors).toEqual([]);
-    expect(validatePunishments(punishments).errors).toEqual([]);
-  });
-
   it("rejects duplicate keys, bad tiers and missing text", () => {
     const { errors } = validateChallenges(
       [

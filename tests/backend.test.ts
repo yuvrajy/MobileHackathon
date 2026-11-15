@@ -14,9 +14,21 @@ function newToken(): string {
   return tokenCounter.toString(16).padStart(64, "0");
 }
 
+const fixtureChallenges = (["easy", "medium", "hard"] as const).flatMap((difficulty) =>
+  Array.from({ length: 6 }, (_, i) => ({
+    key: `${difficulty}_${i}`,
+    description: `${difficulty} challenge ${i}`,
+    difficulty,
+    category: "general",
+    environments: [],
+    enabled: true,
+  })),
+);
+const fixturePunishments = [{ key: "punishment_0", description: "Do a dance", category: "general", enabled: true }];
+
 async function setup() {
   const t = convexTest(schema, modules);
-  await t.mutation(internal.content.seed, {});
+  await t.mutation(internal.content.importContent, { challenges: fixtureChallenges, punishments: fixturePunishments });
   return t;
 }
 
@@ -266,6 +278,56 @@ describe("game", () => {
     await expect(
       t.mutation(api.rooms.createRoom, { name: "T", sessionToken: newToken(), testDurationMinutes: 2 }),
     ).rejects.toThrow(/Test rooms are disabled/);
+  });
+});
+
+describe("bloopers", () => {
+  it("saves bloopers without counting them and reveals them only in results", async () => {
+    const t = await setup();
+    const { host, guest } = await twoTeamRoom(t);
+    await t.mutation(api.rooms.startGame, { sessionToken: host });
+    const game = await t.query(api.game.getGame, { sessionToken: host });
+    const storageId = await upload(t, "image/jpeg");
+    const saved = await t.mutation(api.game.saveBlooper, {
+      sessionToken: host,
+      assignmentId: game.assignments[0].id,
+      storageId,
+      mediaType: "photo",
+      mimeType: "image/jpeg",
+    });
+    expect(saved).toEqual({ ok: true });
+    const after = await t.query(api.game.getGame, { sessionToken: guest });
+    expect(after.leaderboard.every((row) => row.completedCount === 0)).toBe(true);
+
+    await completeAll(t, host);
+    await completeAll(t, guest);
+    const results = await t.query(api.gallery.getResults, { sessionToken: guest });
+    expect(results.gallery).toHaveLength(6);
+    expect(results.bloopers).toHaveLength(1);
+    expect(results.bloopers[0].teamName).toBe("Hosts");
+  });
+
+  it("deletes bloopers when the room expires", async () => {
+    const t = await setup();
+    const { host, guest } = await twoTeamRoom(t);
+    await t.mutation(api.rooms.startGame, { sessionToken: host });
+    const game = await t.query(api.game.getGame, { sessionToken: host });
+    await t.mutation(api.game.saveBlooper, {
+      sessionToken: host,
+      assignmentId: game.assignments[0].id,
+      storageId: await upload(t, "image/jpeg"),
+      mediaType: "photo",
+      mimeType: "image/jpeg",
+    });
+    await completeAll(t, host);
+    await completeAll(t, guest);
+    vi.advanceTimersByTime(GAME_DURATION_MS + RETENTION_AFTER_DEADLINE_MS);
+    await t.finishAllScheduledFunctions(vi.runAllTimers);
+    const left = await t.run(async (ctx) => ({
+      bloopers: (await ctx.db.query("bloopers").collect()).length,
+      storage: (await ctx.db.system.query("_storage").collect()).length,
+    }));
+    expect(left).toEqual({ bloopers: 0, storage: 0 });
   });
 });
 

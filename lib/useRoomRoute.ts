@@ -1,6 +1,6 @@
 import { useQuery } from "convex/react";
-import { router } from "expo-router";
-import { useEffect } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 import { api } from "../convex/_generated/api";
 import { useSession } from "./session";
 
@@ -14,23 +14,31 @@ export function routeForState(state: string): string | null {
   return SCREEN_FOR_STATE[state as keyof typeof SCREEN_FOR_STATE] ?? null;
 }
 
-export function useRoomRoute(screen: RoomScreen) {
-  const { sessionToken, roomCode, clear, loaded } = useSession();
+export function useRoomSession() {
+  const { sessionToken, roomCode } = useSession();
   const session = useQuery(api.rooms.getSession, sessionToken ? { sessionToken, roomCode: roomCode ?? undefined } : "skip");
+  return { sessionToken, session };
+}
 
-  useEffect(() => {
-    if (loaded && !sessionToken) {
-      router.replace("/");
-      return;
-    }
-    if (!session) return;
-    if (session.state === "none") {
-      clear().then(() => router.replace("/"));
-      return;
-    }
-    const target = routeForState(session.state);
-    if (target && target !== `/${screen}`) router.replace(target as never);
-  }, [session, screen, sessionToken, loaded, clear]);
+export function useRoomRoute(screen: RoomScreen) {
+  const { clear, loaded } = useSession();
+  const { sessionToken, session } = useRoomSession();
+
+  useFocusEffect(
+    useCallback(() => {
+      if (loaded && !sessionToken) {
+        router.replace("/");
+        return;
+      }
+      if (!session) return;
+      if (session.state === "none") {
+        clear().then(() => router.replace("/"));
+        return;
+      }
+      const target = routeForState(session.state);
+      if (target && target !== `/${screen}`) router.replace(target as never);
+    }, [session, screen, sessionToken, loaded, clear]),
+  );
 
   return { sessionToken, session };
 }

@@ -3,8 +3,6 @@ import { internalMutation, query } from "./_generated/server";
 import type { MutationCtx } from "./_generated/server";
 import { MIN_TEAMS_TO_START } from "./constants";
 import { validateChallenges, validatePunishments } from "./logic/content";
-import challengesFile from "../data/challenges.json";
-import punishmentsFile from "../data/punishments.json";
 
 async function importContentData(ctx: MutationCtx, rawChallenges: unknown, rawPunishments: unknown) {
   const { challenges, errors: challengeErrors } = validateChallenges(rawChallenges, MIN_TEAMS_TO_START);
@@ -34,11 +32,6 @@ async function importContentData(ctx: MutationCtx, rawChallenges: unknown, rawPu
 
   return { challenges: challenges.length, punishments: punishments.length };
 }
-
-export const seed = internalMutation({
-  args: {},
-  handler: (ctx) => importContentData(ctx, challengesFile, punishmentsFile),
-});
 
 export const importContent = internalMutation({
   args: { challenges: v.any(), punishments: v.any() },

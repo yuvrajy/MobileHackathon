@@ -90,4 +90,18 @@ export default defineSchema({
     .index("by_room", ["roomId"])
     .index("by_assignment", ["assignmentId"])
     .index("by_storage", ["storageId"]),
+
+  bloopers: defineTable({
+    roomId: v.id("rooms"),
+    teamId: v.id("teams"),
+    assignmentId: v.id("assignments"),
+    storageId: v.id("_storage"),
+    mediaType,
+    mimeType: v.string(),
+    durationSeconds: v.optional(v.number()),
+    savedAt: v.number(),
+  })
+    .index("by_room", ["roomId"])
+    .index("by_team", ["teamId"])
+    .index("by_storage", ["storageId"]),
 });

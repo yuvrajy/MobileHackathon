@@ -18,3 +18,4 @@ export const DIFFICULTIES = ["easy", "medium", "hard"] as const;
 export type Difficulty = (typeof DIFFICULTIES)[number];
 export const PHOTO_MIME_TYPES = ["image/jpeg", "image/png", "image/heic", "image/heif"];
 export const VIDEO_MIME_TYPES = ["video/mp4", "video/quicktime"];
+export const MAX_BLOOPERS_PER_TEAM = 20;

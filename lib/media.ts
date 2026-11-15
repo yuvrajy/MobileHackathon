@@ -30,11 +30,6 @@ async function ensureLibraryPermission() {
   if (!permission.granted) throw new PermissionDeniedError("Photo library permission is needed to save.");
 }
 
-export async function saveLocalFileToLibrary(localUri: string): Promise<void> {
-  await ensureLibraryPermission();
-  await Asset.create(localUri);
-}
-
 export async function saveRemoteFileToLibrary(url: string, extension: string): Promise<void> {
   await ensureLibraryPermission();
   const directory = new Directory(Paths.cache, "downloads");

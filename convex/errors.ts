@@ -21,7 +21,8 @@ export type ErrorCode =
   | "VIDEO_TOO_LONG"
   | "INVALID_PUNISHMENT"
   | "TEST_ROOMS_DISABLED"
-  | "SESSION_IN_OTHER_ROOM";
+  | "SESSION_IN_OTHER_ROOM"
+  | "BLOOPER_LIMIT";
 
 export function fail(code: ErrorCode, message: string): never {
   throw new ConvexError({ code, message });

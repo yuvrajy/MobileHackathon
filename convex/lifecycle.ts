@@ -39,6 +39,11 @@ export const expireRoom = internalMutation({
       if (await ctx.db.system.get("_storage", s.storageId)) await ctx.storage.delete(s.storageId);
       await ctx.db.delete("submissions", s._id);
     }
+    const bloopers = await ctx.db.query("bloopers").withIndex("by_room", (q) => q.eq("roomId", roomId)).take(CLEANUP_BATCH);
+    for (const b of bloopers) {
+      if (await ctx.db.system.get("_storage", b.storageId)) await ctx.storage.delete(b.storageId);
+      await ctx.db.delete("bloopers", b._id);
+    }
     const assignments = await ctx.db.query("assignments").withIndex("by_room", (q) => q.eq("roomId", roomId)).take(CLEANUP_BATCH);
     for (const a of assignments) await ctx.db.delete("assignments", a._id);
     const teams = await ctx.db.query("teams").withIndex("by_room", (q) => q.eq("roomId", roomId)).take(CLEANUP_BATCH);
@@ -47,7 +52,7 @@ export const expireRoom = internalMutation({
       await ctx.db.delete("teams", t._id);
     }
 
-    if (submissions.length === CLEANUP_BATCH || assignments.length === CLEANUP_BATCH || teams.length === CLEANUP_BATCH) {
+    if (submissions.length === CLEANUP_BATCH || bloopers.length === CLEANUP_BATCH || assignments.length === CLEANUP_BATCH || teams.length === CLEANUP_BATCH) {
       await ctx.scheduler.runAfter(0, internal.lifecycle.expireRoom, { roomId });
     }
   },

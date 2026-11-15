@@ -1,10 +1,10 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { findMembership, isRoomExpired, requireMember } from "./auth";
-import { CHALLENGES_PER_TEAM, MAX_PHOTO_BYTES, MAX_VIDEO_BYTES, MAX_VIDEO_SECONDS, PHOTO_MIME_TYPES, VIDEO_MIME_TYPES } from "./constants";
+import { CHALLENGES_PER_TEAM, MAX_BLOOPERS_PER_TEAM } from "./constants";
 import { fail, type ErrorCode } from "./errors";
 import { finalizeRoom } from "./lifecycle";
-import { isStorageAttached, rejectUpload } from "./media";
+import { checkCapturedMedia, isStorageAttached, rejectUpload } from "./media";
 import { mediaType } from "./schema";
 
 const DIFFICULTY_ORDER = { easy: 0, medium: 1, hard: 2 } as const;
@@ -93,14 +93,9 @@ export const submitEvidence = mutation({
       return { ok: false as const, code: "INVALID_MEDIA" as const, message: "That upload was already used." };
     }
 
-    const allowed = args.mediaType === "photo" ? PHOTO_MIME_TYPES : VIDEO_MIME_TYPES;
-    const contentType = meta.contentType ?? args.mimeType;
-    if (!allowed.includes(contentType)) return await reject("INVALID_MEDIA", "That file type isn't supported.");
-    const maxBytes = args.mediaType === "photo" ? MAX_PHOTO_BYTES : MAX_VIDEO_BYTES;
-    if (meta.size > maxBytes) return await reject("MEDIA_TOO_LARGE", "That file is too large. Retake a shorter clip.");
-    if (args.mediaType === "video" && (args.durationSeconds === undefined || args.durationSeconds > MAX_VIDEO_SECONDS + 1)) {
-      return await reject("VIDEO_TOO_LONG", `Videos can be at most ${MAX_VIDEO_SECONDS} seconds.`);
-    }
+    const checked = checkCapturedMedia(meta, args.mediaType, args.mimeType, args.durationSeconds);
+    if ("code" in checked) return await reject(checked.code, checked.message);
+    const { contentType } = checked;
 
     await ctx.db.insert("submissions", {
       roomId: room._id,
@@ -125,5 +120,66 @@ export const submitEvidence = mutation({
       await finalizeRoom(ctx, (await ctx.db.get("rooms", room._id))!, "all_finished");
     }
     return { ok: true as const, alreadySubmitted: false, completedCount };
+  },
+});
+
+export const generateBlooperUploadUrl = mutation({
+  args: { sessionToken: v.string() },
+  handler: async (ctx, { sessionToken }) => {
+    const { room, team } = await requireMember(ctx, sessionToken, ["active"]);
+    if (Date.now() >= room.endsAt!) fail("DEADLINE_PASSED", "Time is up.");
+    const saved = await ctx.db.query("bloopers").withIndex("by_team", (q) => q.eq("teamId", team._id)).take(MAX_BLOOPERS_PER_TEAM);
+    if (saved.length >= MAX_BLOOPERS_PER_TEAM) fail("BLOOPER_LIMIT", `Your team can save up to ${MAX_BLOOPERS_PER_TEAM} bloopers.`);
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+export const saveBlooper = mutation({
+  args: {
+    sessionToken: v.string(),
+    assignmentId: v.id("assignments"),
+    storageId: v.id("_storage"),
+    mediaType,
+    mimeType: v.string(),
+    durationSeconds: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const reject = (code: ErrorCode, message: string) => rejectUpload(ctx, args.storageId, code, message);
+    const membership = await findMembership(ctx, args.sessionToken);
+    if (!membership) return await reject("INVALID_SESSION", "You are not part of this room.");
+    const { room, team } = membership;
+
+    const already = await ctx.db.query("bloopers").withIndex("by_storage", (q) => q.eq("storageId", args.storageId)).first();
+    if (already && already.teamId === team._id) return { ok: true as const };
+
+    const now = Date.now();
+    if (isRoomExpired(room, now)) return await reject("ROOM_EXPIRED", "This room has expired.");
+    if (room.status !== "active" || now >= room.endsAt!) return await reject("GAME_NOT_ACTIVE", "The game isn't running.");
+    const assignment = await ctx.db.get("assignments", args.assignmentId);
+    if (!assignment || assignment.teamId !== team._id) return await reject("ASSIGNMENT_NOT_FOUND", "That challenge isn't yours.");
+    const saved = await ctx.db.query("bloopers").withIndex("by_team", (q) => q.eq("teamId", team._id)).take(MAX_BLOOPERS_PER_TEAM);
+    if (saved.length >= MAX_BLOOPERS_PER_TEAM) {
+      return await reject("BLOOPER_LIMIT", `Your team can save up to ${MAX_BLOOPERS_PER_TEAM} bloopers.`);
+    }
+
+    const meta = await ctx.db.system.get("_storage", args.storageId);
+    if (!meta) return { ok: false as const, code: "INVALID_MEDIA" as const, message: "The upload didn't arrive. Try again." };
+    if (await isStorageAttached(ctx, args.storageId)) {
+      return { ok: false as const, code: "INVALID_MEDIA" as const, message: "That upload was already used." };
+    }
+    const checked = checkCapturedMedia(meta, args.mediaType, args.mimeType, args.durationSeconds);
+    if ("code" in checked) return await reject(checked.code, checked.message);
+
+    await ctx.db.insert("bloopers", {
+      roomId: room._id,
+      teamId: team._id,
+      assignmentId: assignment._id,
+      storageId: args.storageId,
+      mediaType: args.mediaType,
+      mimeType: checked.contentType,
+      durationSeconds: args.durationSeconds,
+      savedAt: now,
+    });
+    return { ok: true as const };
   },
 });

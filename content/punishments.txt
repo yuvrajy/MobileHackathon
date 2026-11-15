@@ -1,0 +1,11 @@
+# Punishments the host can pick for last place
+# One per line. Blank lines and lines starting with # are ignored.
+# Edit this file, then run: npm run content
+# These are development samples - replace them with your own.
+
+Do your best runway walk back to the group
+Sing the first verse of a song the winners choose (in a normal speaking voice is fine)
+Buy (or bring) the winners a small snack next time
+Speak in a movie-trailer voice for the next five minutes
+Do 10 jumping jacks together
+Let the winners pick your team's name for the next game

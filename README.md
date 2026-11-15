@@ -9,7 +9,7 @@ Expo (SDK 58) + React Native + TypeScript with Expo Router, and Convex for the d
 ```sh
 npm install
 npx convex dev          # first run: log in and create a project; writes .env.local and keeps functions in sync
-npm run seed            # in another terminal: imports data/challenges.json and data/punishments.json
+npm run content         # in another terminal: pushes content/*.txt (challenges and punishments)
 ```
 
 Without a Convex account, `CONVEX_AGENT_MODE=anonymous npx convex dev` runs a local backend at `http://127.0.0.1:3210`. That works for the iOS simulator and tests, but phones and cloud devices need a cloud deployment.
@@ -26,12 +26,23 @@ npx expo run:ios        # or: npx expo run:android, or --device for a plugged-in
 
 ## Content
 
-`data/challenges.json` and `data/punishments.json` currently hold a small **development-only** sample set (keys start with `dev_`). To use the founders' lists, replace those files using the same shape and run `npm run seed` again. Import is idempotent: rows are upserted by `key` and keys missing from the file are disabled. The import is rejected with a list of problems if a key is duplicated, text is missing, a difficulty is not easy/medium/hard, or any tier has fewer than two enabled challenges. A room with N teams needs at least N enabled challenges per tier to start.
+Challenges and punishments live in plain text files, one per line:
 
-```json
-[{"key":"challenge_001","description":"…","difficulty":"easy","category":"creative","environments":["mall"],"enabled":true}]
-[{"key":"punishment_001","description":"…","category":"funny","enabled":true}]
+```text
+content/challenges/easy.txt
+content/challenges/medium.txt
+content/challenges/hard.txt
+content/punishments.txt
 ```
+
+Blank lines and lines starting with `#` are ignored. Edit the files, then push them to the Convex deployment:
+
+```sh
+npm run content             # dev deployment from .env.local
+npm run content -- --prod   # production deployment
+```
+
+A push replaces the live lists: new lines are added and removed lines are disabled. Games that already started keep the challenges they were dealt. The push is refused with line numbers if a file repeats a line, and with a message if any difficulty has fewer than two challenges. A room with N teams needs at least N challenges in each difficulty to start. The current lines are development samples.
 
 ## Short test rooms
 
@@ -58,7 +69,7 @@ npm test            # vitest + convex-test: assignment, ranking, content validat
 2. Phone B: Join room → code + name. Both lobbies list two teams; B sees "Waiting for host".
 3. A: Punishment → pick one or Skip → Save. B sees it. A: Start game.
 4. Both see the same countdown and different easy/medium/hard challenges.
-5. Capture proof → Submit. The other phone's leaderboard updates to 1/3. Retake discards; Save as Blooper only saves to the camera roll.
+5. Capture proof → Submit. The other phone's leaderboard updates to 1/3. Retake discards; Save as Blooper uploads the clip without counting it, and it appears in the Bloopers section of the results.
 6. Finish all three on A: "All challenges complete! Waiting for the other teams."
 7. Finish on B (or let a short test room run out): both phones show the standings, winner, last place and gallery. Save any item.
 

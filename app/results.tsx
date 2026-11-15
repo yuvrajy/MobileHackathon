@@ -1,16 +1,27 @@
 import { useQuery } from "convex/react";
+import { router } from "expo-router";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { Button } from "../components/Button";
 import { GalleryItem } from "../components/GalleryItem";
 import { PunishmentSummary } from "../components/PunishmentSummary";
 import { Screen } from "../components/Screen";
 import { TeamAvatar } from "../components/TeamAvatar";
 import { api } from "../convex/_generated/api";
+import { clearPendingProofs } from "../lib/pendingProof";
+import { useSession } from "../lib/session";
 import { useRoomRoute } from "../lib/useRoomRoute";
 import { colors, font, radius, spacing } from "../lib/theme";
 
 export default function Results() {
   const { sessionToken } = useRoomRoute("results");
   const results = useQuery(api.gallery.getResults, sessionToken ? { sessionToken } : "skip");
+  const { clear } = useSession();
+
+  const newGame = async () => {
+    await clearPendingProofs();
+    await clear();
+    router.replace("/");
+  };
 
   if (!results) {
     return (
@@ -25,7 +36,7 @@ export default function Results() {
   const expiresAt = new Date(results.expiresAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 
   return (
-    <Screen>
+    <Screen footer={<Button testID="new-game" title="New game" onPress={newGame} />}>
       <View style={styles.hero} testID="winner">
         <Text style={styles.heroLabel}>{results.endReason === "deadline" ? "Time's up!" : "Everyone finished!"}</Text>
         <Text style={styles.heroTitle}>
@@ -54,11 +65,23 @@ export default function Results() {
       ) : null}
 
       <Text style={styles.section}>Gallery</Text>
-      <Text style={styles.note}>Room photos and videos are deleted at {expiresAt}. Saved copies stay on your phone.</Text>
+      <Text style={styles.note}>
+        Room photos and videos are deleted at {expiresAt}. Save the ones you want before starting a new game. Saved copies stay on your phone.
+      </Text>
       {results.gallery.length === 0 ? <Text style={styles.note}>No proof was submitted.</Text> : null}
       {results.gallery.map((item) => (
         <GalleryItem key={item.id} item={item} />
       ))}
+
+      {results.bloopers.length > 0 ? (
+        <>
+          <Text style={styles.section}>Bloopers</Text>
+          <Text style={styles.note}>{"Outtakes teams saved along the way. They didn't count as proof."}</Text>
+          {results.bloopers.map((item) => (
+            <GalleryItem key={item.id} item={item} />
+          ))}
+        </>
+      ) : null}
     </Screen>
   );
 }

@@ -39,10 +39,10 @@
     "ios": "expo run:ios",
     "android": "expo run:android",
     "backend": "convex dev",
-    "seed": "convex run content:seed",
     "typecheck": "tsc --noEmit && tsc --noEmit -p convex",
     "lint": "expo lint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "content": "node scripts/push-content.mjs"
   },
   "private": true
 }
