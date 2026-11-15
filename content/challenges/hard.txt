@@ -2,5 +2,5 @@
 # Demo: the first line goes to the host's team, the second to the joining team.
 # Edit this file, then run: npm run content
 
-Hit the sea lion: lie on your stomach, grab your ankles and bounce while you film it
+Hit the sea lion with a stranger (ask them first): lie on your stomachs, grab your ankles and bounce while someone films it
 Get someone to splash water in your face

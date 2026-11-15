@@ -15,10 +15,10 @@ export const challengeArt = {
     scene: "baristaSelfie",
     description: "Take a selfie with a barista (ask them first!)",
   },
-  hard_4b1db9740502: {
+  hard_fe95b9c402bb: {
     scene: "seaLion",
     description:
-      "Hit the sea lion: lie on your stomach, grab your ankles and bounce while you film it",
+      "Hit the sea lion with a stranger (ask them first): lie on your stomachs, grab your ankles and bounce while someone films it",
   },
   hard_e2fceadb801e: {
     scene: "waterSplash",
