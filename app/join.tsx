@@ -1,7 +1,8 @@
 import { useConvex, useMutation } from "convex/react";
 import { router } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
+import { Text } from "../components/Typography";
 import { Screen } from "../components/Screen";
 import { TeamSetupForm } from "../components/TeamSetupForm";
 import { TextField } from "../components/TextField";

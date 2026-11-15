@@ -1,6 +1,7 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Text } from "./Typography";
 import { TeamAvatar } from "./TeamAvatar";
-import { colors, font, spacing } from "../lib/theme";
+import { colors, spacing } from "../lib/theme";
 
 type Row = { id: string; name: string; avatarUrl: string | null; completedCount: number };
 
@@ -10,7 +11,7 @@ export function Leaderboard({ rows, myTeamId }: { rows: Row[]; myTeamId: string 
       {rows.map((row) => (
         <View key={row.id} style={styles.row}>
           <TeamAvatar name={row.name} url={row.avatarUrl} size={36} />
-          <Text style={styles.name} numberOfLines={1}>
+          <Text style={styles.name}>
             {row.name}
             {row.id === myTeamId ? " (you)" : ""}
           </Text>
@@ -23,7 +24,7 @@ export function Leaderboard({ rows, myTeamId }: { rows: Row[]; myTeamId: string 
 
 const styles = StyleSheet.create({
   list: { gap: spacing.sm },
-  row: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 44 },
-  name: { flex: 1, fontSize: font.body, color: colors.text },
-  count: { fontSize: font.body, fontWeight: "700", color: colors.text, fontVariant: ["tabular-nums"] },
+  row: { flexDirection: "row", alignItems: "center", gap: spacing.md, minHeight: 60, paddingVertical: 8, borderBottomWidth: 2, borderBottomColor: colors.border },
+  name: { flex: 1, fontSize: 20, fontWeight: "600", color: colors.text },
+  count: { fontSize: 24, fontWeight: "800", color: colors.text, fontVariant: ["tabular-nums"] },
 });

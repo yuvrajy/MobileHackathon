@@ -1,7 +1,8 @@
 import { useMutation, useQuery } from "convex/react";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
+import { Text } from "../components/Typography";
 import { Button } from "../components/Button";
 import { Screen } from "../components/Screen";
 import { TextField } from "../components/TextField";
@@ -102,14 +103,14 @@ const styles = StyleSheet.create({
   lead: { fontSize: font.body, color: colors.muted },
   option: {
     minHeight: MIN_TOUCH,
-    borderWidth: 1,
+    borderWidth: 3,
     borderColor: colors.border,
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     justifyContent: "center",
   },
-  selected: { borderColor: colors.accent, borderWidth: 2 },
+  selected: { borderColor: colors.text, backgroundColor: colors.accent, borderWidth: 3 },
   optionText: { fontSize: font.body, color: colors.text },
   selectedText: { fontWeight: "600" },
   error: { color: colors.danger, fontSize: font.small },

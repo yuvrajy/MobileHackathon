@@ -40,7 +40,7 @@ export const getGame = query({
       punishment: room.punishment,
       assignments: assignments
         .sort((a, b) => DIFFICULTY_ORDER[a.difficulty] - DIFFICULTY_ORDER[b.difficulty])
-        .map((a) => ({ id: a._id, challengeKey: a.challengeKey, description: a.description, difficulty: a.difficulty, status: a.status })),
+        .map((a) => ({ id: a._id, description: a.description, difficulty: a.difficulty, status: a.status })),
       leaderboard,
     };
   },

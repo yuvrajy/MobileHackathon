@@ -1,7 +1,9 @@
 import { router } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Text } from "../components/Typography";
 import { Button } from "../components/Button";
 import { Screen } from "../components/Screen";
+import { Doodle } from "../components/Doodle";
 import { useSession } from "../lib/session";
 import { clearPendingProofs } from "../lib/pendingProof";
 import { colors, font, spacing } from "../lib/theme";
@@ -11,6 +13,7 @@ export default function Expired() {
   return (
     <Screen scroll={false}>
       <View style={styles.center}>
+        <View style={{ alignItems: "center" }}><Doodle size={140} /></View>
         <Text style={styles.title}>This room has ended</Text>
         <Text style={styles.body}>Its photos and videos have been deleted. Anything you saved is still on your phone.</Text>
       </View>

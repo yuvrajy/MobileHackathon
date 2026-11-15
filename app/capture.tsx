@@ -1,7 +1,8 @@
 import { CameraView, useCameraPermissions, useMicrophonePermissions, type CameraMode } from "expo-camera";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Linking, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Linking, Pressable, StyleSheet, View } from "react-native";
+import { Text } from "../components/Typography";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../components/Button";
 import { ProofPreview } from "../components/ProofPreview";

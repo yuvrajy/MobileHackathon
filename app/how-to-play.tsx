@@ -1,4 +1,5 @@
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
+import { Text } from "../components/Typography";
 import { Screen } from "../components/Screen";
 import { colors, font } from "../lib/theme";
 
@@ -28,5 +29,5 @@ export default function HowToPlay() {
 
 const styles = StyleSheet.create({
   title: { fontWeight: "700", color: colors.text },
-  body: { fontSize: font.body, color: colors.text, lineHeight: 23 },
+  body: { fontSize: font.body, color: colors.text, lineHeight: 27 },
 });
